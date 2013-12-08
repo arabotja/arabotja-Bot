@@ -21,7 +21,7 @@ Example
 Installation
 ------------
 
-**You need python 2.7.6, BeautifulSoup4, mechanize, tweepy**
+**You need python 2.7.6 and these python modules; BeautifulSoup4, mechanize, tweepy**
 
 - Upload to your server
 - Open arabotja.py 
