@@ -53,7 +53,7 @@ class DumpTruck(Bibliomaniac):
 			if recentTweet[i] in lightFilter:
 				print '-' * 50 + 'Old one...Already tweeted.'
 
-			elif recentTweet[i] in self.fineFilter:
+			elif recentTweet[i] in self.fineFilter: # Server stuttering proof
 				print '?' * 50 + 'Old one...Already tweeted. (Unstable Server Warning!!!)'
 
 			else:
