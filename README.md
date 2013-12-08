@@ -15,8 +15,8 @@ About
 
 Example
 ------------
-Twitter: https://twitter.com/arabotja
-Target site: http://www.ilbe.com/
+ - Twitter: https://twitter.com/arabotja
+ - Target site: http://www.ilbe.com/
 
 Installation
 ------------
