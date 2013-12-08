@@ -29,10 +29,8 @@ Installation
 - 'crontab -e' and set the target page access timing (Create log file by '>' operator) *google 'crontab' for more information*
 - 'python arabotja_turnKey.py' for first initiation (or Reboot + Filter up-to-date reset)
 
-
-
-
-
+etc.
+------------
 * License : MIT
 * GitHub : https://github.com/arabotja/arabotja-Bot/
 * E-mail : arabotja@gmail.com
