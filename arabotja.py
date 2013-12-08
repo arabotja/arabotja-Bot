@@ -22,7 +22,7 @@ class BabyBird(DumpTruck):
 		DumpTruck.__init__(self, name)
 		self.basket = []
 
-	def shortenUrl(self,longurl): #Bit.ly
+	def shortenUrl(self,longurl): # bit.ly url shortener API
 		API_USER = "yourUsername"
 		API_KEY = "yourAPIKey"
 		b = bitly_api.Connection(access_token = API_KEY)
@@ -32,7 +32,7 @@ class BabyBird(DumpTruck):
 
 		return shortUrl
 
-	def tweetMsg(self, e_arg):
+	def tweetMsg(self, e_arg): # tweepy API
 		api.update_status(e_arg)
 		
 		try:
@@ -41,11 +41,11 @@ class BabyBird(DumpTruck):
 		except Exception, e:
 		 	print str(e) 
 
-	def wakeBird(self):
+	def wakeBird(self): # Turn key for first start or reboot (small DB making to prevent duplication)
 		self.makeFilter('정보', 3)
 		print '-' * 50 + 'makeFilter() Success'
 
-	def feedBird(self): 
+	def feedBird(self): # Core; Scrap recent list - Filter - Refine message - Hand over bullet
 		self.dumpRecent('정보', 1)
 		print '-' * 50 + 'dumpRecent() Success'
 		self.judgeArticle()
@@ -55,7 +55,7 @@ class BabyBird(DumpTruck):
 			articleNumber = re.findall(r'(\d{10})', i[1])
 			longurl = self.url + str(articleNumber[0])
 			e_arg = i[0].encode('UTF-8') + ' ' +  self.shortenUrl(longurl).encode('UTF-8') # encode when you moving around 'unicode + int' list or etc.
-			e_arg = e_arg[0:138]
+			e_arg = e_arg[0:138] # Twitter allows only char 140
 			self.tweetMsg(e_arg)
 			time.sleep(5)
 		
