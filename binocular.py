@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
 import re
 
-class Bibliomaniac:
+class Bibliomaniac: # class for query switcher / article list bindier
 	br = mechanize.Browser()
 	br.set_handle_robots(False)
 	br.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36')]
@@ -31,7 +31,7 @@ class Bibliomaniac:
 
 		elif self.name == 'ilbe':
 			self.url = 'http://www.ilbe.com/'
-			self.recipe = SoupStrainer('tr', class_ = re.compile('bg[12]'))
+			self.recipe = SoupStrainer('tr', class_ = re.compile('bg[12]')) # More information about this in official BeautifulSoup document
 			[prefix, infix, suffix] = ['http://www.ilbe.com/?mid=ilbe&category=&search_target=title&&search_keyword=', '&page=', '']
 
 			query = prefix + str(keyword) + infix + str(page) + suffix
@@ -41,7 +41,7 @@ class Bibliomaniac:
 		else:
 			pass
 
-	def bindPicture(self, keyword, lastpage):
+	def bindPicture(self, keyword, lastpage): # Listing urls page by page
 
 		try:
 			page = 1
@@ -53,7 +53,7 @@ class Bibliomaniac:
 				print 'Querying: ' + query
 				
 				htmltext = Bibliomaniac.br.open(query)
-				soup = BeautifulSoup(htmltext, parse_only = self.recipe)
+				soup = BeautifulSoup(htmltext, parse_only = self.recipe) # Analyze only filtered tags
 
 				for element in soup.find_all('a'):
 					url = element.get('href') # type(url) == unicode
@@ -68,6 +68,9 @@ class Bibliomaniac:
 			print str(e)
 
 
+
+
+#Try this for test
 
 #if __name__ == "__main__":
 #	google = Bibliomaniac('google')
