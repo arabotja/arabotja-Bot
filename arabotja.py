@@ -51,13 +51,14 @@ class BabyBird(DumpTruck):
 		self.judgeArticle()
 		print '-' * 50 + 'judgeArticle() Success'
 
-		for i in self.basket:
-			articleNumber = re.findall(r'(\d{10})', i[1])
-			longurl = self.url + str(articleNumber[0])
-			e_arg = i[0].encode('UTF-8') + ' ' +  self.shortenUrl(longurl).encode('UTF-8') # encode when you moving around 'unicode + int' list or etc.
-			e_arg = e_arg[0:138] # Twitter allows only char 140
-			self.tweetMsg(e_arg)
-			time.sleep(5)
+		if self.basket != []:
+			for i in self.basket:
+				articleNumber = re.findall(r'(\d{10})', i[1])
+				longurl = self.url + str(articleNumber[0])
+				e_arg = i[0].encode('UTF-8') + ' ' +  self.shortenUrl(longurl).encode('UTF-8') # encode when you moving around 'unicode + int' list or etc.
+				e_arg = e_arg[0:138] # Twitter allows only char 140
+				self.tweetMsg(e_arg)
+				time.sleep(5)
 		
 		else:
 			print '-' * 50 + 'Nothing in buffer.'
