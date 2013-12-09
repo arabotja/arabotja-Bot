@@ -10,7 +10,7 @@ About
 ------------
  - No DB Auth, Access
  - 2 duplication-proof filters
- - Flexibility of 'each filter size setting' & 'Access timing' of course
+ - Flexibility of 'Keyword chaging', 'Filter size' & 'Access timing' Setting
  - Classifeid modules for reorginize the Bot (ex. Google searching)
 
 Example
