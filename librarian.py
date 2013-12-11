@@ -11,7 +11,9 @@ class DumpTruck(Bibliomaniac):
 
 	def makeFilter(self, keyword, lastpage): # When you turn key, recent article list become two filters' base
 		self.bindPicture(keyword, lastpage)
-	
+
+		self.routes = self.fixList(self.routes)
+
 		l_f = open(self.name + '_lightFilter.bin', 'wb') # l_f for light_file; Copying of last recent article list
 		pickle.dump(self.routes, l_f)
 		l_f.close()
@@ -24,6 +26,8 @@ class DumpTruck(Bibliomaniac):
 	
 	def dumpRecent(self, keyword, lastpage):
 		self.bindPicture(keyword, lastpage)
+
+		self.routes = self.fixList(self.routes)
 	
 		r_f = open(self.name + '_recentTweet.bin', 'wb') # r_f for recent_file
 		pickle.dump(self.routes, r_f)
@@ -51,16 +55,19 @@ class DumpTruck(Bibliomaniac):
 		while i < 5: # Old one? or New one?
 			
 			if recentTweet[i] in lightFilter:
-				print '-' * 50 + 'Old one...Already tweeted.'
+				print ' ' * 50 + 'Old one...Already tweeted.'
 
-			elif recentTweet[i] in self.fineFilter: # Duplication proof when target server stuttering
-				print '?' * 50 + 'Old one...Already tweeted. (Unstable Server Warning!!!)'
+			elif recentTweet[i] in self.fineFilter: # Server stuttering situation procedure
+				print '?' * 50 + 'Old one...Already tweeted.'
+				print ' ' * 50 + 'Unstable Server Warning!!!'
 
 			else:
 				self.basket.insert(0, recentTweet[i])
 				print '+' * 50 + 'New article!, Sent buffer.'
 
 			i += 1
+
+		self.getBackLost(self.keyword)
 
 		for e in self.basket: # Update fine filter
 			self.fineFilter.insert(0, e)
@@ -69,12 +76,12 @@ class DumpTruck(Bibliomaniac):
 		pickle.dump(self.fineFilter, f_f)
 		f_f.close()
 		del f_f
-		print '-' * 50 + 'Updated _fineFilter.bin.'
+		print ' ' * 50 + 'Updated _fineFilter.bin.'
 
 		l_f = open(self.name + '_lightFilter.bin', 'wb') # Update light filter
 		pickle.dump(recentTweet, l_f)
 		l_f.close()
 		del l_f
-		print '-' * 50 + 'Updated _lightFilter.bin.'
+		print ' ' * 50 + 'Updated _lightFilter.bin.'
 
 

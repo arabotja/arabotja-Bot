@@ -55,9 +55,9 @@ class Bibliomaniac: # class for query switcher / article list bindier
 				htmltext = Bibliomaniac.br.open(query)
 				soup = BeautifulSoup(htmltext, parse_only = self.recipe) # Analyze only filtered tags
 
-				for element in soup.find_all('a'):
-					url = element.get('href') # type(url) == unicode
-					title = element.get_text() # type(title) == unicode
+				for e in soup.find_all('a'):
+					url = e.get('href') # type(url) == unicode
+					title = e.get_text() # type(title) == unicode
 					self.routes.append([title, url])
 
 				print str(page) + ' page done, Check ' + self.name + '.routes!'
@@ -67,6 +67,32 @@ class Bibliomaniac: # class for query switcher / article list bindier
 		except Exception, e:
 			print str(e)
 
+	def getBackLost(self, keyword): # When backup server DB sleeping, retrieve the lost article
+
+		page = self.url + self.name
+
+		print '=' * 50 + 'Checking lost article...'
+		
+		htmltext = Bibliomaniac.br.open(page)
+		soup = BeautifulSoup(htmltext, parse_only = self.recipe) # Analyze only filtered tags
+
+		for e in soup.find_all('a'):
+			url = e.get('href') # type(url) == unicode
+			title = e.get_text() # type(title) == unicode
+			
+			if str(keyword) in title.encode('UTF-8'):
+
+				if [title, url] in self.fineFilter or self.basket:
+					print ' ' * 50 + 'Not a lost article!'
+					pass
+				
+				else:
+					self.basket.insert(0, [title, url])
+					print '*' * 50 + 'Lost article!, Sent buffer.'
+					print ' ' * 50 + 'Slow target server Warning!'
+				
+			else:
+				pass
 
 
 
