@@ -8,10 +8,11 @@ Ilbe informative article feeding Bot
 
 About
 ------------
- - No DB Auth, Access
+ - No DB authentication, access
  - 2 duplication-proof filters
- - Flexibility of 'Keyword chaging', 'Filter size' & 'Access timing' Setting
- - Classifeid modules for reorginize the Bot (ex. Google searching)
+ - Never miss vanishing article from target server search result database (v2.0~)
+ - Flexibility of 'Filter size', 'Access timing' setting & 'Keyword chaging'
+ - Classified modules for reorganizing the Bot (ex. Google searching)
 
 Example
 ------------
