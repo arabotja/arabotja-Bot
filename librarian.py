@@ -14,42 +14,24 @@ class DumpTruck(Bibliomaniac):
 
 		self.routes = self.fixList(self.routes)
 
-		l_f = open(self.name + '_lightFilter.bin', 'wb') # l_f for light_file; Copying of last recent article list
-		pickle.dump(self.routes, l_f)
-		l_f.close()
-		del l_f
-
-		f_f = open(self.name + '_fineFilter.bin', 'wb') # f_f for fine_file; Incremental filter list from your turn key 
-		pickle.dump(self.routes, f_f)
-		f_f.close()
-		del f_f
+		with open(self.name + '_lightFilter.bin', 'wb') as l_f, open(self.name + '_fineFilter.bin', 'wb') as f_f:
+			pickle.dump(self.routes, l_f)
+			pickle.dump(self.routes, f_f)
 	
 	def dumpRecent(self, keyword, lastpage):
 		self.bindPicture(keyword, lastpage)
 
 		self.routes = self.fixList(self.routes)
 	
-		r_f = open(self.name + '_recentTweet.bin', 'wb') # r_f for recent_file
-		pickle.dump(self.routes, r_f)
-		r_f.close()
-		del r_f
+		with open(self.name + '_recentTweet.bin', 'wb') as r_f:
+			pickle.dump(self.routes, r_f)
 	
 	def judgeArticle(self): # Filter core
 
-		r_f = open(self.name + '_recentTweet.bin', 'rb') 
-		recentTweet = pickle.load(r_f)
-		r_f.close()
-		del r_f
-
-		l_f = open(self.name + '_lightFilter.bin', 'rb') 
-		lightFilter = pickle.load(l_f)
-		l_f.close()
-		del l_f
-
-		f_f = open(self.name + '_fineFilter.bin', 'rb') 
-		self.fineFilter = pickle.load(f_f)
-		f_f.close()
-		del f_f
+		with open(self.name + '_recentTweet.bin', 'rb') as r_f, open(self.name + '_lightFilter.bin', 'rb') as l_f, open(self.name + '_fineFilter.bin', 'rb') as f_f:
+			recentTweet = pickle.load(r_f)
+			lightFilter = pickle.load(l_f)
+			self.fineFilter = pickle.load(f_f)
 
 		i = 0
 		while i < 5: # Old one? or New one?
@@ -72,16 +54,10 @@ class DumpTruck(Bibliomaniac):
 		for e in self.basket: # Update fine filter
 			self.fineFilter.insert(0, e)
 
-		f_f = open(self.name + '_fineFilter.bin', 'wb')
-		pickle.dump(self.fineFilter, f_f)
-		f_f.close()
-		del f_f
-		print ' ' * 50 + 'Updated _fineFilter.bin.'
-
-		l_f = open(self.name + '_lightFilter.bin', 'wb') # Update light filter
-		pickle.dump(recentTweet, l_f)
-		l_f.close()
-		del l_f
-		print ' ' * 50 + 'Updated _lightFilter.bin.'
+		with open(self.name + '_fineFilter.bin', 'wb') as f_f, open(self.name + '_lightFilter.bin', 'wb') as l_f:
+			pickle.dump(self.fineFilter, f_f)
+			print ' ' * 50 + 'Updated _fineFilter.bin.'
+			pickle.dump(recentTweet, l_f)
+			print ' ' * 50 + 'Updated _lightFilter.bin.'
 
 
