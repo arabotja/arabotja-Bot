@@ -3,11 +3,13 @@
  
 import tweepy
 import bitly_api
-import sys, pickle, time, datetime
-import re
-from librarian import DumpTruck
-from maintenance import Repairman
+import sys, pickle, re, datetime, time
+import mechanize
+from bs4 import BeautifulSoup
+from bs4 import SoupStrainer
  
+
+
 # twitter API
 CONSUMER_KEY = 'yourConsumerKey'
 CONSUMER_SECRET = 'yourConsumerSecret'
@@ -17,7 +19,67 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
 
-class BabyBird(DumpTruck, Repairman):
+
+
+class Bibliomaniac: # class for query switcher / article list bindier
+	br = mechanize.Browser()
+	br.set_handle_robots(False)
+	br.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36')]
+
+	def __init__(self, name):
+		self.name = name
+		self.routes = []
+
+	def checkArticle(self, keyword):
+		page = 'http://www.ilbe.com/ilbe'
+
+		print '>' * 50 + 'Checking articles...'
+		
+		htmltext = Bibliomaniac.br.open(page)
+		soup = BeautifulSoup(htmltext, parse_only = SoupStrainer('tr', class_ = re.compile('bg[12]'))) # Analyze only filtered tags
+
+		for e in soup.find_all('a'):
+			url = e.get('href') # type(url) == unicode
+			title = e.get_text() # type(title) == unicode
+			
+			if keyword in title:
+				
+				if [title, url] in self.record or self.basket:
+					print '-' * 50 + 'Old one, already twitted.'
+					pass
+				else:
+					self.basket.insert(0, [title, url])
+					print '+' * 50 + 'Found one!, sent buffer...'
+
+			else:
+				pass
+
+
+
+class DumpTruck(Bibliomaniac):
+
+	def __init__(self, name):
+		Bibliomaniac.__init__(self, name)
+	
+	def makeFilter(self): # Turn key method
+		with open(self.name + '_record.bin', 'wb') as f_f:
+			pickle.dump(self.routes, f_f)
+
+	def processArticle(self):
+		with open(self.name + '_record.bin', 'rb') as f_f:
+			self.record = pickle.load(f_f)
+			self.checkArticle(self.keyword)
+
+			for e in self.basket: # Update record
+				self.record.insert(0, e)
+
+		with open(self.name + '_record.bin', 'wb') as f_f:
+			pickle.dump(self.record, f_f)
+			print ' ' * 50 + 'Updated _record.bin.'
+
+
+
+class BabyBird(DumpTruck):
 
 	def __init__(self, name, keyword):
 		DumpTruck.__init__(self, name)
@@ -26,8 +88,8 @@ class BabyBird(DumpTruck, Repairman):
 
 	# bit.ly API
 	def shortenUrl(self,longurl):
-		API_USER = "yourUsername"
-		API_KEY = "yourAPIKey"
+		API_USER = 'yourApiUser'
+		API_KEY = 'yourApiKey'
 		b = bitly_api.Connection(access_token = API_KEY)
 		
 		response = b.shorten(uri = longurl)
@@ -44,15 +106,9 @@ class BabyBird(DumpTruck, Repairman):
 		except Exception, e:
 		 	print str(e) 
 
-	def wakeBird(self): # Turn key for first start or reboot (small DB making to prevent duplication)
-		self.makeFilter(self.keyword, 5)
-		print '~' * 50 + 'makeFilter() Success'
-
 	def feedBird(self): # Core; Scrap recent list - Filter - Refine message - Hand over bullet
-		self.dumpRecent(self.keyword, 1)
-		print '~' * 50 + 'dumpRecent() Success'
-		self.judgeArticle()
-		print ' ' * 50 + 'judgeArticle() Success'
+		self.processArticle()
+		print ' ' * 50 + 'processArticle() Success'
 
 		try:
 			if self.basket != []:
@@ -72,10 +128,10 @@ class BabyBird(DumpTruck, Repairman):
 
 if __name__ == '__main__':
 	try:
-		arabotja = BabyBird('ilbe', '정보')
+		arabotja = BabyBird('ilbe', u'정보')
 		arabotja.feedBird()
 		timespamp = datetime.datetime.now()
-		print '~' * 50 + str(timespamp)
+		print '<' * 50 + str(timespamp)
 	
 	except Exception, e:
 		print str(e)
