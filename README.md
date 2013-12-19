@@ -10,7 +10,7 @@ About
  - No DB authentication, access
  - Flexibility of 'Access timing' & 'Keyword chaging'
  - Simplified code(much better than v2.x)
- - If you want more expandability(like 'random old article review', 'google search', etc.), try v2.x version instead of v3.x
+ - If you want more expandability and recovery feature, try to use v2.x version instead of v3.x
 
 Example
 ------------
