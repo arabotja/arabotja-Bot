@@ -45,7 +45,7 @@ class BabyBird(DumpTruck, Repairman):
 		 	print str(e) 
 
 	def wakeBird(self): # Turn key for first start or reboot (small DB making to prevent duplication)
-		self.makeFilter(self.keyword, 3)
+		self.makeFilter(self.keyword, 5)
 		print '~' * 50 + 'makeFilter() Success'
 
 	def feedBird(self): # Core; Scrap recent list - Filter - Refine message - Hand over bullet

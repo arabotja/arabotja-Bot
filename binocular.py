@@ -5,6 +5,7 @@ import mechanize
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
 import re
+import time
 
 class Bibliomaniac: # class for query switcher / article list bindier
 	br = mechanize.Browser()
@@ -63,6 +64,7 @@ class Bibliomaniac: # class for query switcher / article list bindier
 				print str(page) + ' page done, Check ' + self.name + '.routes!'
 				
 				page += 1
+				time.sleep(3)
 
 		except Exception, e:
 			print str(e)
@@ -93,7 +95,6 @@ class Bibliomaniac: # class for query switcher / article list bindier
 				
 			else:
 				pass
-
 
 
 #Try this for test
