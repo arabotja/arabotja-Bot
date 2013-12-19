@@ -29,6 +29,6 @@ Installation
 
 etc.
 ------------
-* License : MIT
+* License : MIT(https://github.com/arabotja/arabotja-Bot/blob/master/LICENSE)
 * GitHub : https://github.com/arabotja/arabotja-Bot/
 * E-mail : arabotja@gmail.com
