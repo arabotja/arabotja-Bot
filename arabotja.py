@@ -40,7 +40,7 @@ class Bibliomaniac: # class for query switcher / article list bindier
 
         for e in soup.find_all('td', class_ = re.compile('title')):
             
-            if keyword in e.strong:
+            if e.strong and (keyword in e.strong):
                 url = e.a.get('href') # type(url) == unicode
                 title = e.a.get_text() # type(title) == unicode
 
@@ -51,8 +51,7 @@ class Bibliomaniac: # class for query switcher / article list bindier
                     self.basket.insert(0, [title, url])
                     print '+' * 50 + 'Found one!, sent buffer...'
 
-            else:
-                pass
+            else: pass
 
 
 
