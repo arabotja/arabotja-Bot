@@ -19,7 +19,7 @@ Example
 
 Installation
 ------------
-**You need python 2.7.6 and these external python modules; BeautifulSoup4, mechanize, tweepy**
+**You need python 2.7.6 and these external python modules; BeautifulSoup4, tweepy, bitly_api**
 
 - Upload arabotja.py to your server
 - Open arabotja.py with vim or else 
