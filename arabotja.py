@@ -4,17 +4,18 @@
 import tweepy
 import bitly_api
 import sys, pickle, re, datetime, time
-import mechanize
+import urllib2
+from urllib2 import urlopen, Request, HTTPError
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
- 
+
 
 
 # twitter API
-CONSUMER_KEY = 'yourConsumerKey'
-CONSUMER_SECRET = 'yourConsumerSecret'
-ACCESS_KEY = 'yourAccessKey'
-ACCESS_SECRET = 'yourAccessSecret'
+CONSUMER_KEY = 'Your Consumer Key'
+CONSUMER_SECRET = 'Your Consumer Secret'
+ACCESS_KEY = 'Your Access Key'
+ACCESS_SECRET = 'Your Access Secret'
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
@@ -22,24 +23,25 @@ api = tweepy.API(auth)
 
 
 class Bibliomaniac: # class for query switcher / article list bindier
-    br = mechanize.Browser()
-    br.set_handle_robots(False)
-    br.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36')]
 
     def __init__(self, name):
         self.name = name
         self.routes = []
 
     def checkArticle(self, keyword):
-        page = 'http://www.ilbe.com/ilbe'
+        #proxy = urllib2.ProxyHandler({'http': '211.42.249.146:3128'})
+        #opener = urllib2.build_opener(proxy)
+        #urllib2.install_opener(opener)
+
+        url = 'http://www.ilbe.com/ilbe'
+        headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'User-agent' : 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36'}
+        htmltext = urlopen(Request(url, headers=headers))
+        soup = BeautifulSoup(htmltext, parse_only = SoupStrainer('td', class_ = re.compile('title'))) # Analyze only filtered tags
 
         print '>' * 50 + 'Checking articles...'
         
-        htmltext = Bibliomaniac.br.open(page)
-        soup = BeautifulSoup(htmltext, parse_only = SoupStrainer('td', class_ = re.compile('title'))) # Analyze only filtered tags
-
         for e in soup.find_all('td', class_ = re.compile('title')):
-            
+
             if e.strong and (keyword in e.strong):
                 url = e.a.get('href') # type(url) == unicode
                 title = e.a.get_text() # type(title) == unicode
@@ -50,7 +52,6 @@ class Bibliomaniac: # class for query switcher / article list bindier
                 else:
                     self.basket.insert(0, [title, url])
                     print '+' * 50 + 'Found one!, sent buffer...'
-
             else: pass
 
 
@@ -86,9 +87,9 @@ class BabyBird(DumpTruck):
         self.basket = []
 
     # bit.ly API
-    def shortenUrl(self,longurl):
-        API_USER = 'yourApiUser'
-        API_KEY = 'yourApiKey'
+    def shortenUrl(self, longurl):
+        API_USER = 'Your API User'
+        API_KEY = 'Your API Key'
         b = bitly_api.Connection(access_token = API_KEY)
         
         response = b.shorten(uri = longurl)
@@ -102,8 +103,8 @@ class BabyBird(DumpTruck):
         try:
              print 'Tweet! : ' + e_arg
         
-        except Exception, e:
-             print str(e) 
+        except Exception, err:
+             print str(err) 
 
     def feedBird(self): # Core; Scrap recent list - Filter - Refine message - Hand over bullet
         self.processArticle()
@@ -120,8 +121,26 @@ class BabyBird(DumpTruck):
             else:
                 print ' ' * 50 + 'Nothing in buffer.'
         
-        except Exception, e:
-            print str(e)
+        except Exception, err:
+            print str(err)
+
+    def checkBroken(self):
+        status = api.home_timeline(count = 5)
+        for e in range(0, 5):
+            url = re.search(ur'(http:\/\/.*)', status[e].text).group(0)
+            try:
+                headers = {'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'User-agent' : 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36'}
+                htmltext = urlopen(Request(urlopen(url).geturl(), headers=headers))
+                print '-' * 50 + 'Not deleted.'
+            except HTTPError, err:
+                if err.code == 410:
+                    api.destroy_status(status[e].id)
+                    print '!' * 50 + 'Deleted!, removed tweet...'
+                else:
+                    raise
+            except Exception, err:
+                print str(err)
+            time.sleep(3)
 
 
 
@@ -129,10 +148,9 @@ if __name__ == '__main__':
     try:
         arabotja = BabyBird('ilbe', u'정보')
         arabotja.feedBird()
-        timespamp = datetime.datetime.now()
-        print '<' * 50 + str(timespamp)
+        arabotja.checkBroken()
+        timestamp = datetime.datetime.now()
+        print '<' * 50 + str(timestamp)
     
-    except Exception, e:
-        print str(e)
-
-
+    except Exception, err:
+        print str(err)
