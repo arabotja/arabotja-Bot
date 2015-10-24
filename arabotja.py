@@ -125,23 +125,22 @@ class BabyBird(DumpTruck):
             print str(err)
 
     def checkBroken(self):
-        status = api.home_timeline(count = 5)
-        for e in range(0, 5):
-            url = re.search(ur'(http:\/\/.*)', status[e].text).group(0)
+        status = api.home_timeline() # Pull 20 tweets.
+        for e in range(0, 20, 3):
             try:
+                url = re.search(ur'(https:\/\/.*)', status[e].text.encode('UTF-8')).group(0)
                 headers = {'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'User-agent' : 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36'}
                 htmltext = urlopen(Request(urlopen(url).geturl(), headers=headers))
-                print '-' * 50 + 'Not deleted.'
-            except HTTPError, err:
-                if err.code == 410:
+                soup = BeautifulSoup(htmltext, parse_only = SoupStrainer('div', class_ = re.compile('tCenter messageBox'))) # Check the status.
+                if soup.div:
                     api.destroy_status(status[e].id)
                     print '!' * 50 + 'Deleted!, removed tweet...'
                 else:
-                    raise
+                    print '-' * 50 + 'Not deleted.'
             except Exception, err:
                 print str(err)
             time.sleep(3)
-
+        print ' ' * 50 + 'checkBroken() Success.'
 
 
 if __name__ == '__main__':
