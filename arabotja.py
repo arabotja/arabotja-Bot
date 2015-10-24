@@ -143,9 +143,11 @@ class BabyBird(DumpTruck):
         print ' ' * 50 + 'checkBroken() Success.'
 
 
+
 if __name__ == '__main__':
     try:
         arabotja = BabyBird('ilbe', u'정보')
+        # arabotja.makeFilter()
         arabotja.feedBird()
         arabotja.checkBroken()
         timestamp = datetime.datetime.now()
